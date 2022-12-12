@@ -19,7 +19,7 @@ const UserForm = () => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:4000/get-batches").then((res) => {
+    axios.get("https://yoga-app-m7p5.onrender.com/get-batches").then((res) => {
       setBatches(res.data);
     });
   }, []);
@@ -27,7 +27,7 @@ const UserForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:4000/user-details", details)
+      .post("https://yoga-app-m7p5.onrender.com/user-details", details)
       .then((res) => {
         setMessage("Registered!");
         setDetails({
