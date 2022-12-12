@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "./userForm.css";
 import axios from "axios";
-
+// import PhoneInput from 'react-phone-input-2'
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Toast from "react-bootstrap/Toast";
+// import Toast from "react-bootstrap/Toast";
 
 const UserForm = () => {
   const [batches, setBatches] = useState([]);
   const [details, setDetails] = useState({
     name: "",
     email: "",
+    age: "",
     phone: "",
     payment: 500,
     batch: "",
@@ -18,7 +19,7 @@ const UserForm = () => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    axios.get("/get-batches").then((res) => {
+    axios.get("http://localhost:4000/get-batches").then((res) => {
       setBatches(res.data);
     });
   }, []);
@@ -26,13 +27,14 @@ const UserForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("/user-details", details)
+      .post("http://localhost:4000/user-details", details)
       .then((res) => {
         setMessage("Registered!");
         setDetails({
           name: "",
           email: "",
           phone: "",
+          age: "",
           payment: 500,
           batch: "",
         });
@@ -76,6 +78,11 @@ const UserForm = () => {
 
             <div>
               <Form.Label>Phone Number</Form.Label>
+              {/* <PhoneInput
+                country={'in'}
+                value={details.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
+              /> */}
               <Form.Control
                 type="text"
                 placeholder="Enter phone"
