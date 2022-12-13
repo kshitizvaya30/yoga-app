@@ -12,18 +12,18 @@ const UserForm = () => {
     age: "",
     phone: "",
     payment: 500,
+    dateOfBirth: "",
     batch: "",
   });
   const [message, setMessage] = useState("");
   useEffect(() => {
     axios.get("https://yoga-app-m7p5.onrender.com/get-batches").then((res) => {
+        console.log(res);
         setBatches(res.data);
     });
   }, []);
 
   const handleSubmit = (e) => {
-      if(!handleAge())return;
-      console.log("present here");
       e.preventDefault();
       axios
         .post("https://yoga-app-m7p5.onrender.com/user-details", details)
@@ -50,16 +50,23 @@ const UserForm = () => {
     }));
   };
 
-  const handleAge = () => {
-    if(details.age < 18 || details.age > 65){
+  const handleAge = (e) => {
+    const currentYear = new Date().getFullYear();
+    const year = e.target.value.split("-")[0];
+    const age = currentYear - year;
+    if (age < 18 || age > 65){
       alert("Age should be between 18-65");
       setDetails(prevState => ({
         ...prevState,
-        age: '',
+        dateOfBirth: ' ',
       }))
-      return false;
+    } else {
+      setDetails(prevState => ({
+        ...prevState,
+        age: age,
+        dateOfBirth: e.target.value,
+      }))
     }
-    return true;
   };
 
   return (
@@ -103,12 +110,14 @@ const UserForm = () => {
 
             <div>
               <Form.Label>Age</Form.Label>
+              
               <Form.Control
-                type="number" 
-                onInput={(e) => e.target.value = e.target.value.slice(0, 2)}
-                placeholder="Enter Age"
-                value={details.age}
-                onChange={(e) => handleChange("age", e.target.value)}
+                type="date"
+                className="form-control shadow-none"
+                placeholder="mm/dd/yyyy"
+                aria-describedby="button-addon2"
+                value={details.dateOfBirth}
+                onChange={(e) => handleAge(e)}
                 required
               />
             </div>
