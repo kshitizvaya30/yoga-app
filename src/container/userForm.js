@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./userForm.css";
 import axios from "axios";
-// import PhoneInput from 'react-phone-input-2'
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-// import Toast from "react-bootstrap/Toast";
 
 const UserForm = () => {
   const [batches, setBatches] = useState([]);
@@ -17,31 +15,32 @@ const UserForm = () => {
     batch: "",
   });
   const [message, setMessage] = useState("");
-
   useEffect(() => {
     axios.get("https://yoga-app-m7p5.onrender.com/get-batches").then((res) => {
-      setBatches(res.data);
+        setBatches(res.data);
     });
   }, []);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    axios
-      .post("https://yoga-app-m7p5.onrender.com/user-details", details)
-      .then((res) => {
-        setMessage("Registered!");
-        setDetails({
-          name: "",
-          email: "",
-          phone: "",
-          age: "",
-          payment: 500,
-          batch: "",
+      if(!handleAge())return;
+      console.log("present here");
+      e.preventDefault();
+      axios
+        .post("https://yoga-app-m7p5.onrender.com/user-details", details)
+        .then((res) => {
+          setMessage("Registered!");
+          setDetails({
+            name: "",
+            email: "",
+            phone: "",
+            age: "",
+            payment: 500,
+            batch: "",
+          });
+        })
+        .catch((err) => {
+          setMessage(err.response.data);
         });
-      })
-      .catch((err) => {
-        setMessage(err.response.data);
-      });
   };
 
   const handleChange = (key, val) => {
@@ -49,6 +48,18 @@ const UserForm = () => {
       ...prevState,
       [key]: val,
     }));
+  };
+
+  const handleAge = () => {
+    if(details.age < 18 || details.age > 65){
+      alert("Age should be between 18-65");
+      setDetails(prevState => ({
+        ...prevState,
+        age: '',
+      }))
+      return false;
+    }
+    return true;
   };
 
   return (
@@ -64,6 +75,7 @@ const UserForm = () => {
                 placeholder="Enter name"
                 value={details.name}
                 onChange={(e) => handleChange("name", e.target.value)}
+                required
               />
             </div>
             <div>
@@ -73,21 +85,31 @@ const UserForm = () => {
                 placeholder="Enter email"
                 value={details.email}
                 onChange={(e) => handleChange("email", e.target.value)}
+                required
               />
             </div>
 
             <div>
               <Form.Label>Phone Number</Form.Label>
-              {/* <PhoneInput
-                country={'in'}
-                value={details.phone}
-                onChange={(e) => handleChange("phone", e.target.value)}
-              /> */}
               <Form.Control
-                type="text"
+                type="number" 
+                onInput={(e) => e.target.value = e.target.value.slice(0, 10)}
                 placeholder="Enter phone"
                 value={details.phone}
                 onChange={(e) => handleChange("phone", e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <Form.Label>Age</Form.Label>
+              <Form.Control
+                type="number" 
+                onInput={(e) => e.target.value = e.target.value.slice(0, 2)}
+                placeholder="Enter Age"
+                value={details.age}
+                onChange={(e) => handleChange("age", e.target.value)}
+                required
               />
             </div>
 
@@ -107,6 +129,7 @@ const UserForm = () => {
                 aria-label="Default select example"
                 defaultValue={details.batch}
                 onChange={(e) => handleChange("batch", e.target.value)}
+                required
               >
                 <option value="" disabled>
                   Select
